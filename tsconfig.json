@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "target": "ESNEXT",
     "module": "commonjs",
     "jsx": "preserve",
@@ -10,5 +10,5 @@
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./src", "./jest-setup.ts"]
+  "include": ["./"]
 }

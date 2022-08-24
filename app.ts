@@ -1,6 +1,7 @@
-type Card = {
-  value: string | number
+class Card {
+  value: number | string
   suit: string
+  displayName: string
 }
 
 class Deck {
@@ -16,6 +17,7 @@ class Deck {
         this.deck.push({
           value: values[value],
           suit: suits[suit],
+          displayName: `${values[value]} of ${suits[suit]}`,
         })
       }
     }
@@ -27,20 +29,20 @@ class Deck {
 }
 
 class Shoe {
-  private shoe: Card[]
+  private cards: Card[]
 
   constructor(size: number) {
-    this.shoe = []
+    this.cards = []
     for (let i = 0; i < size; i++) {
       let deck = new Deck().show()
       deck.forEach((card: Card) => {
-        this.shoe.push(card)
+        this.cards.push(card)
       })
     }
   }
 
   public shuffle(): Card[] {
-    let shoe = this.shoe
+    let shoe = this.cards
     let m = shoe.length
     let i
 
@@ -49,11 +51,12 @@ class Shoe {
       ;[shoe[m], shoe[i]] = [shoe[i], shoe[m]]
     }
 
-    this.shoe = shoe
-    return this.shoe
+    this.cards = shoe
+    return this.cards
   }
 }
 
-let shoe = new Shoe(4)
+let shoe = new Shoe(5)
 shoe.shuffle()
-console.log(shoe)
+const topCard = shoe['cards'][0]
+console.log('Top Card: ' + topCard.displayName)
