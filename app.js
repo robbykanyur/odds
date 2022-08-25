@@ -13,7 +13,7 @@ var Deck = /** @class */ (function () {
                 this.deck.push({
                     value: values[value],
                     suit: suits[suit],
-                    displayName: "".concat(values[value], " of ").concat(suits[suit])
+                    name: "".concat(values[value], " of ").concat(suits[suit])
                 });
             }
         }
@@ -48,7 +48,5 @@ var Shoe = /** @class */ (function () {
     };
     return Shoe;
 }());
-var shoe = new Shoe(5);
-shoe.shuffle();
-var topCard = shoe['cards'][0];
-console.log('Top Card: ' + topCard.displayName);
+var shoe = new Shoe(6).shuffle();
+console.log(shoe[0].name);

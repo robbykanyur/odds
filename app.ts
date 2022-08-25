@@ -1,7 +1,11 @@
 class Card {
   value: number | string
   suit: string
-  displayName: string
+  name: string
+}
+
+class Hand {
+  private hand: Card[]
 }
 
 class Deck {
@@ -17,7 +21,7 @@ class Deck {
         this.deck.push({
           value: values[value],
           suit: suits[suit],
-          displayName: `${values[value]} of ${suits[suit]}`,
+          name: `${values[value]} of ${suits[suit]}`,
         })
       }
     }
@@ -56,7 +60,5 @@ class Shoe {
   }
 }
 
-let shoe = new Shoe(5)
-shoe.shuffle()
-const topCard = shoe['cards'][0]
-console.log('Top Card: ' + topCard.displayName)
+let shoe = new Shoe(6).shuffle()
+console.log(shoe[0].name)
