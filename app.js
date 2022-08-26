@@ -3,6 +3,12 @@ var Card = /** @class */ (function () {
     }
     return Card;
 }());
+var Hand = /** @class */ (function () {
+    function Hand() {
+        this.cards = [];
+    }
+    return Hand;
+}());
 var Deck = /** @class */ (function () {
     function Deck() {
         this.deck = [];
@@ -49,4 +55,17 @@ var Shoe = /** @class */ (function () {
     return Shoe;
 }());
 var shoe = new Shoe(6).shuffle();
-console.log(shoe[0].name);
+var playerHand = new Hand();
+var dealerHand = new Hand();
+var deal = function (shoe, hand) {
+    return hand.cards.push(shoe.shift());
+};
+var dealNewHand = function () {
+    for (var i = 0; i < 2; i++) {
+        deal(shoe, playerHand);
+        deal(shoe, dealerHand);
+    }
+    console.log('Player hand: ' + JSON.stringify(playerHand.cards));
+    console.log('Dealer hand: ' + JSON.stringify(dealerHand.cards));
+};
+dealNewHand();

@@ -5,7 +5,10 @@ class Card {
 }
 
 class Hand {
-  private hand: Card[]
+  cards: Card[]
+  constructor() {
+    this.cards = []
+  }
 }
 
 class Deck {
@@ -61,4 +64,20 @@ class Shoe {
 }
 
 let shoe = new Shoe(6).shuffle()
-console.log(shoe[0].name)
+let playerHand = new Hand()
+let dealerHand = new Hand()
+
+const deal = (shoe: Array<Card>, hand: Hand): Number => {
+  return hand.cards.push(shoe.shift()!)
+}
+
+const dealNewHand = () => {
+  for (let i = 0; i < 2; i++) {
+    deal(shoe, playerHand)
+    deal(shoe, dealerHand)
+  }
+  console.log('Player hand: ' + JSON.stringify(playerHand.cards))
+  console.log('Dealer hand: ' + JSON.stringify(dealerHand.cards))
+}
+
+dealNewHand()
