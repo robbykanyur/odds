@@ -50,6 +50,34 @@ class Card {
   }
 }
 
+type Seat = 'Player' | 'Dealer'
+class Hand {
+  private cards: Card[]
+  public seat: Seat
+
+  constructor(seat: Seat) {
+    this.cards = []
+    this.seat = seat
+  }
+
+  public showCards(): (Card | number)[] {
+    if (this.seat == 'Player') {
+      let total = 0
+      this.cards.forEach(card => {
+        total += card.getValue()
+      })
+      return [...this.cards, total]
+    } else {
+      return [this.cards[0], this.cards[0].getValue()]
+    }
+  }
+
+  public addCard(card: Card): Card[] {
+    this.cards.push(card)
+    return this.cards
+  }
+}
+
 class Shoe {
   public decks: number
   public cards: Card[]
@@ -95,5 +123,17 @@ class Shoe {
   }
 }
 
+function dealHand(shoe: Shoe): void {
+  for (let i = 0; i < 2; i++) {
+    playerHand.addCard(shoe.cards.pop()!)
+    dealerHand.addCard(shoe.cards.pop()!)
+  }
+}
+
 const shoe = new Shoe(4)
+const playerHand = new Hand('Player')
+const dealerHand = new Hand('Dealer')
 shoe.shuffle()
+dealHand(shoe)
+console.log(dealerHand.showCards())
+console.log(playerHand.showCards())
