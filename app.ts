@@ -1,54 +1,74 @@
+const FACES = [
+  'Ace',
+  'Two',
+  'Three',
+  'Four',
+  'Five',
+  'Six',
+  'Seven',
+  'Eight',
+  'Nine',
+  'Ten',
+  'Jack',
+  'Queen',
+  'King',
+] as const
+const SUITS = ['Clubs', 'Spades', 'Hearts', 'Diamonds'] as const
+
+type Face = typeof FACES[number]
+type Suit = typeof SUITS[number]
 class Card {
-  value: number | string
-  suit: string
-  name: string
-}
+  public face: Face
+  public suit: Suit
 
-class Hand {
-  cards: Card[]
-  constructor() {
-    this.cards = []
+  constructor(face: Face, suit: Suit) {
+    this.face = face
+    this.suit = suit
   }
-}
 
-class Deck {
-  private deck: Card[]
+  public displayName(): string {
+    return `${this.face} of ${this.suit}`
+  }
 
-  constructor() {
-    this.deck = []
-
-    const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace']
-    const suits = ['Clubs', 'Spades', 'Hearts', 'Diamonds']
-    for (let suit in suits) {
-      for (let value in values) {
-        this.deck.push({
-          value: values[value],
-          suit: suits[suit],
-          name: `${values[value]} of ${suits[suit]}`,
-        })
-      }
+  public getValue(): number {
+    const cards = {
+      Ace: 1,
+      Two: 2,
+      Three: 3,
+      Four: 4,
+      Five: 5,
+      Six: 6,
+      Seven: 7,
+      Eight: 8,
+      Nine: 9,
+      Ten: 10,
+      Jack: 10,
+      Queen: 10,
+      King: 10,
     }
-  }
-
-  public show(): Card[] {
-    return this.deck
+    return cards[this.face]
   }
 }
 
 class Shoe {
-  private cards: Card[]
+  public decks: number
+  public cards: Card[]
+  public warning?: number
 
-  constructor(size: number) {
+  constructor(decks: number) {
     this.cards = []
-    for (let i = 0; i < size; i++) {
-      let deck = new Deck().show()
-      deck.forEach((card: Card) => {
-        this.cards.push(card)
+    this.decks = decks
+
+    for (let i = 0; i < decks; i++) {
+      SUITS.forEach(suit => {
+        FACES.forEach(face => {
+          this.cards.push(new Card(face, suit))
+        })
       })
     }
   }
 
-  public shuffle(): Card[] {
+  public shuffle(): void {
     let shoe = this.cards
     let m = shoe.length
     let i
@@ -59,25 +79,21 @@ class Shoe {
     }
 
     this.cards = shoe
-    return this.cards
+    this.warning = this.generateWarning()
+  }
+
+  private generateWarning(): number {
+    const positive = Math.random() < 0.5
+    const min = 0
+    const max = 10
+    const flutter = Math.floor(Math.random() * (max - min + 1)) + min
+    if (positive) {
+      return 52 + flutter
+    } else {
+      return 52 - flutter
+    }
   }
 }
 
-let shoe = new Shoe(6).shuffle()
-let playerHand = new Hand()
-let dealerHand = new Hand()
-
-const deal = (shoe: Array<Card>, hand: Hand): Number => {
-  return hand.cards.push(shoe.shift()!)
-}
-
-const dealNewHand = () => {
-  for (let i = 0; i < 2; i++) {
-    deal(shoe, playerHand)
-    deal(shoe, dealerHand)
-  }
-  console.log('Player hand: ' + JSON.stringify(playerHand.cards))
-  console.log('Dealer hand: ' + JSON.stringify(dealerHand.cards))
-}
-
-dealNewHand()
+const shoe = new Shoe(4)
+shoe.shuffle()

@@ -1,71 +1,90 @@
-var Card = /** @class */ (function () {
-    function Card() {
+"use strict";
+const FACES = [
+    'Ace',
+    'Two',
+    'Three',
+    'Four',
+    'Five',
+    'Six',
+    'Seven',
+    'Eight',
+    'Nine',
+    'Ten',
+    'Jack',
+    'Queen',
+    'King',
+];
+const SUITS = ['Clubs', 'Spades', 'Hearts', 'Diamonds'];
+class Card {
+    face;
+    suit;
+    constructor(face, suit) {
+        this.face = face;
+        this.suit = suit;
     }
-    return Card;
-}());
-var Hand = /** @class */ (function () {
-    function Hand() {
+    displayName() {
+        return `${this.face} of ${this.suit}`;
+    }
+    getValue() {
+        const cards = {
+            Ace: 1,
+            Two: 2,
+            Three: 3,
+            Four: 4,
+            Five: 5,
+            Six: 6,
+            Seven: 7,
+            Eight: 8,
+            Nine: 9,
+            Ten: 10,
+            Jack: 10,
+            Queen: 10,
+            King: 10,
+        };
+        return cards[this.face];
+    }
+}
+class Shoe {
+    decks;
+    cards;
+    warning;
+    constructor(decks) {
         this.cards = [];
-    }
-    return Hand;
-}());
-var Deck = /** @class */ (function () {
-    function Deck() {
-        this.deck = [];
-        var values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace'];
-        var suits = ['Clubs', 'Spades', 'Hearts', 'Diamonds'];
-        for (var suit in suits) {
-            for (var value in values) {
-                this.deck.push({
-                    value: values[value],
-                    suit: suits[suit],
-                    name: "".concat(values[value], " of ").concat(suits[suit])
+        this.decks = decks;
+        for (let i = 0; i < decks; i++) {
+            SUITS.forEach(suit => {
+                FACES.forEach(face => {
+                    this.cards.push(new Card(face, suit));
                 });
-            }
-        }
-    }
-    Deck.prototype.show = function () {
-        return this.deck;
-    };
-    return Deck;
-}());
-var Shoe = /** @class */ (function () {
-    function Shoe(size) {
-        var _this = this;
-        this.cards = [];
-        for (var i = 0; i < size; i++) {
-            var deck = new Deck().show();
-            deck.forEach(function (card) {
-                _this.cards.push(card);
             });
         }
     }
-    Shoe.prototype.shuffle = function () {
-        var _a;
-        var shoe = this.cards;
-        var m = shoe.length;
-        var i;
+    shuffle() {
+        let shoe = this.cards;
+        let m = shoe.length;
+        let i;
         while (m) {
             i = Math.floor(Math.random() * m--);
-            _a = [shoe[i], shoe[m]], shoe[m] = _a[0], shoe[i] = _a[1];
+            [shoe[m], shoe[i]] = [shoe[i], shoe[m]];
         }
         this.cards = shoe;
-        return this.cards;
-    };
-    return Shoe;
-}());
-var shoe = new Shoe(6).shuffle();
-var playerHand = new Hand();
-var dealerHand = new Hand();
-var deal = function (shoe, hand) {
-    return hand.cards.push(shoe.shift());
-};
-var dealNewHand = function () {
-    for (var i = 0; i < 2; i++) {
-        deal(shoe, playerHand);
-        deal(shoe, dealerHand);
+        this.warning = this.generateWarning();
     }
-    console.log('Player hand: ' + JSON.stringify(playerHand.cards));
-    console.log('Dealer hand: ' + JSON.stringify(dealerHand.cards));
-};
-dealNewHand();
+    generateWarning() {
+        const positive = Math.random() < 0.5;
+        const min = 0;
+        const max = 10;
+        const flutter = Math.floor(Math.random() * (max - min + 1)) + min;
+        if (positive) {
+            return 52 + flutter;
+        }
+        else {
+            return 52 - flutter;
+        }
+    }
+}
+const shoe = new Shoe(4);
+for (let i = 0; i < 100; i++) {
+    shoe.shuffle();
+    console.log(shoe.warning);
+}
