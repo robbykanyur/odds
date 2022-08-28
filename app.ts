@@ -137,17 +137,21 @@ class Shoe {
   }
 }
 
-function dealHand(shoe: Shoe): void {
+function dealHand(shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
   for (let i = 0; i < 2; i++) {
     playerHand.addCard(shoe.cards.pop()!)
     dealerHand.addCard(shoe.cards.pop()!)
   }
 }
 
-const shoe = new Shoe(4)
-const playerHand = new Hand('Player')
-const dealerHand = new Hand('Dealer')
-shoe.shuffle()
-dealHand(shoe)
-console.log(dealerHand.showCards())
-console.log(playerHand.showCards())
+function startGame(decks: number): { shoe: Shoe; hands: Hand[] } {
+  const shoe = new Shoe(decks)
+  const playerHand = new Hand('Player')
+  const dealerHand = new Hand('Dealer')
+  shoe.shuffle()
+  dealHand(shoe, playerHand, dealerHand)
+  return { shoe: shoe, hands: [playerHand, dealerHand] }
+}
+
+const game = startGame(4)
+console.log(JSON.stringify(game.hands))
