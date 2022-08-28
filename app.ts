@@ -60,21 +60,35 @@ class Hand {
     this.seat = seat
   }
 
-  public showCards(): (Card | number)[] {
+  public showCards(): { total: number[]; cards: Card[] } {
     if (this.seat == 'Player') {
-      let total = 0
-      this.cards.forEach(card => {
-        total += card.getValue()
-      })
-      return [...this.cards, total]
+      return { total: this.calculateTotal(this.cards), cards: this.cards }
     } else {
-      return [this.cards[0], this.cards[0].getValue()]
+      return { total: this.calculateTotal([this.cards[0]]), cards: [this.cards[0]] }
     }
   }
 
   public addCard(card: Card): Card[] {
     this.cards.push(card)
     return this.cards
+  }
+
+  private calculateTotal(cards: Card[]): number[] {
+    let total = 0
+    let aces = 0
+    cards.forEach(card => {
+      if (card.face === 'Ace') {
+        aces += 1
+        total += 11
+      } else {
+        total += card.getValue()
+      }
+    })
+    if (aces === 0) {
+      return [total]
+    } else {
+      return [total - aces * 10, total]
+    }
   }
 }
 
