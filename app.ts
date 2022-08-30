@@ -1,3 +1,6 @@
+import * as readline from 'node:readline'
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+
 const FACES = [
   'Ace',
   'Two',
@@ -54,6 +57,7 @@ type Seat = 'Player' | 'Dealer'
 class Hand {
   private cards: Card[]
   public seat: Seat
+  public value = this.calculateTotal
 
   constructor(seat: Seat) {
     this.cards = []
@@ -144,14 +148,21 @@ function dealHand(shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
   }
 }
 
-function startGame(decks: number): { shoe: Shoe; hands: Hand[] } {
-  const shoe = new Shoe(decks)
+function playGame(): void {
+  const shoe = new Shoe(4)
+  shoe.shuffle()
   const playerHand = new Hand('Player')
   const dealerHand = new Hand('Dealer')
-  shoe.shuffle()
   dealHand(shoe, playerHand, dealerHand)
-  return { shoe: shoe, hands: [playerHand, dealerHand] }
+  console.log('Dealer\u2019s hand: ')
+  console.log(dealerHand.showCards().cards[0].displayName())
+  console.log('Value of hand: ', dealerHand.value(dealerHand.showCards().cards))
+  console.log('')
+  console.log('Your hand:')
+  playerHand.showCards().cards.forEach(card => {
+    console.log(card.displayName())
+  })
+  console.log('Value of hand: ', playerHand.value(playerHand.showCards().cards))
 }
 
-const game = startGame(4)
-console.log(JSON.stringify(game.hands))
+playGame()
