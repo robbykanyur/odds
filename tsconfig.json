@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
+    "outDir": "build",
     "target": "ESNEXT",
     "module": "commonjs",
     "jsx": "preserve",
@@ -10,5 +11,5 @@
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./"]
+  "include": ["src/**/*"]
 }
