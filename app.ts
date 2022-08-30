@@ -148,21 +148,49 @@ function dealHand(shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
   }
 }
 
+function displayHand(seat: 'Player' | 'Dealer', hand: Hand): void {
+  if (seat === 'Player') {
+    console.log('Your hand:')
+    hand.showCards().cards.forEach(card => {
+      console.log(card.displayName())
+    })
+    console.log('Value of hand: ', hand.value(hand.showCards().cards))
+    console.log('')
+  } else {
+    console.log('Dealer\u2019s hand: ')
+    console.log(hand.showCards().cards[0].displayName())
+    console.log('Value of hand: ', hand.value(hand.showCards().cards))
+    console.log('')
+  }
+}
+
+const gameLoop = function (shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
+  rl.question('Would you like to [H]it or [S]tand? ', action => {
+    let processedAction = action.toUpperCase()
+    if (processedAction === ('H' || 'HIT')) {
+      console.log('You hit')
+      playerHand.addCard(shoe.cards.pop()!)
+      displayHand('Player', playerHand)
+      gameLoop(shoe, playerHand, dealerHand)
+    } else if (processedAction === ('S' || 'STAND')) {
+      console.log('You stood')
+    } else {
+      console.log('Invalid input \u2013 please try again')
+      gameLoop(shoe, playerHand, dealerHand)
+    }
+  })
+}
+
 function playGame(): void {
   const shoe = new Shoe(4)
   shoe.shuffle()
   const playerHand = new Hand('Player')
   const dealerHand = new Hand('Dealer')
   dealHand(shoe, playerHand, dealerHand)
-  console.log('Dealer\u2019s hand: ')
-  console.log(dealerHand.showCards().cards[0].displayName())
-  console.log('Value of hand: ', dealerHand.value(dealerHand.showCards().cards))
-  console.log('')
-  console.log('Your hand:')
-  playerHand.showCards().cards.forEach(card => {
-    console.log(card.displayName())
-  })
-  console.log('Value of hand: ', playerHand.value(playerHand.showCards().cards))
+  displayHand('Dealer', dealerHand)
+  displayHand('Player', playerHand)
+
+  gameLoop(shoe, playerHand, dealerHand)
 }
 
 playGame()
