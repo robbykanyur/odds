@@ -1,20 +1,17 @@
 import Card from './Card'
-import { Seat } from '../lib/types'
 
 export default class Hand {
   private cards: Card[]
-  public seat: Seat
 
-  constructor(seat: Seat) {
+  constructor() {
     this.cards = []
-    this.seat = seat
   }
 
-  public showCards(): { total: number[]; cards: Card[] } {
-    if (this.seat == 'Player') {
-      return { total: this.value(), cards: this.cards }
+  public showCards(hideDealerCard?: boolean): { cards: Card[] } {
+    if (hideDealerCard) {
+      return { cards: [this.cards[0]] }
     } else {
-      return { total: [this.cards[0].getValue()], cards: [this.cards[0]] }
+      return { cards: this.cards }
     }
   }
 
@@ -23,7 +20,7 @@ export default class Hand {
     return this.cards
   }
 
-  public value(): number[] {
+  public value(hideDealerCard?: boolean): number[] {
     let total = 0
     let aces = 0
     this.cards.forEach(card => {
@@ -34,10 +31,21 @@ export default class Hand {
         total += card.getValue()
       }
     })
+
+    if (hideDealerCard && this.cards[0].face == 'Ace') {
+      return [1, 11]
+    }
+
     if (aces === 0) {
       return [total]
     } else {
       return [total - aces * 10, total]
     }
+  }
+
+  // debug methods
+
+  public setAce(): void {
+    this.cards[0] = new Card('Ace', 'Spades')
   }
 }

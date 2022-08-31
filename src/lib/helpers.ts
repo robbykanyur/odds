@@ -9,18 +9,14 @@ export function dealHand(shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
   }
 }
 
-export function displayHand(seat: Seat, hand: Hand): void {
+export function displayHand(seat: Seat, hand: Hand, hideDealerCard?: boolean): void {
   if (seat === 'Player') {
     console.log('Your hand:')
-    hand.showCards().cards.forEach(card => {
-      console.log(card.displayName())
-    })
-    console.log('Value of hand: ', hand.value())
-    console.log('')
   } else {
     console.log('Dealer\u2019s hand: ')
-    console.log(hand.showCards().cards[0].displayName())
-    console.log('Value of hand: ', hand.value())
-    console.log('')
   }
+  hand.showCards(hideDealerCard).cards.forEach(card => {
+    console.log(card.displayName())
+  })
+  console.log('Value of hand:', hand.value(hideDealerCard), '\n')
 }

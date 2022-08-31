@@ -31,16 +31,17 @@ const gameLoop = function (game: Game): void {
 }
 
 function playDealerHand(game: Game): void {
-  displayHand('Player', game.dealerHand)
+  displayHand('Dealer', game.dealerHand)
 }
 
 function playGame(): void {
   const shoe = new Shoe(4)
   shoe.shuffle()
-  const playerHand = new Hand('Player')
-  const dealerHand = new Hand('Dealer')
+  const playerHand = new Hand()
+  const dealerHand = new Hand()
   dealHand(shoe, playerHand, dealerHand)
-  displayHand('Dealer', dealerHand)
+
+  displayHand('Dealer', dealerHand, true)
   displayHand('Player', playerHand)
 
   gameLoop({ shoe: shoe, playerHand: playerHand, dealerHand: dealerHand })
