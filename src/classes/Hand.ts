@@ -38,6 +38,8 @@ export default class Hand {
 
     if (aces === 0) {
       return [total]
+    } else if (aces > 0 && total > 21) {
+      return [total - aces * 10]
     } else {
       return [total - aces * 10, total]
     }

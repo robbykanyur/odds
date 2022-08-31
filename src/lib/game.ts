@@ -3,6 +3,7 @@ import Hand from '../classes/Hand'
 import { Game } from '../lib/types'
 import { displayHand, dealHand } from './helpers'
 import * as readline from 'node:readline'
+import Card from 'src/classes/Card'
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
@@ -10,16 +11,16 @@ const gameLoop = function (game: Game): void {
   const currentLowValue = game.playerHand.value()[0]!
   if (currentLowValue > 21) {
     console.log('BUST!', '\n')
-    console.log(displayHand('Player', game.dealerHand))
+    displayHand('Dealer', game.dealerHand)
   } else {
     rl.question('Would you like to [H]it or [S]tand? ', action => {
       let processedAction = action.toUpperCase()
-      if (processedAction === ('H' || 'HIT')) {
+      if (processedAction === 'H' || processedAction === 'HIT') {
         console.log('You hit', '\n')
         game.playerHand.addCard(game.shoe.cards.pop()!)
         displayHand('Player', game.playerHand)
         gameLoop(game)
-      } else if (processedAction === ('S' || 'STAND')) {
+      } else if (processedAction === 'S' || processedAction === 'STAND') {
         console.log('You stood', '\n')
         playDealerHand(game)
       } else {
