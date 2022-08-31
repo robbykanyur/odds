@@ -36,12 +36,33 @@ function playGame(): void {
   const dealerHand = new Hand()
   dealHand(shoe, playerHand, dealerHand)
 
+  playerHand.setBlackjack()
   dealerHand.setBlackjack()
 
-  displayHand('Dealer', dealerHand, true)
-  displayHand('Player', playerHand)
+  if (isBlackjack(dealerHand) && isBlackjack(playerHand)) {
+    displayHand('Dealer', dealerHand)
+    displayHand('Player', playerHand)
+    console.log('DOUBLE BLACKJACK!!!')
+  } else if (isBlackjack(dealerHand)) {
+    displayHand('Dealer', dealerHand)
+    displayHand('Player', playerHand)
+    console.log('DEALER BLACKJACK!!!')
+  } else if (isBlackjack(playerHand)) {
+    displayHand('Dealer', dealerHand)
+    displayHand('Player', playerHand)
+    console.log('YOU GOT BLACKJACK!!!')
+  } else {
+    displayHand('Dealer', dealerHand, true)
+    displayHand('Player', playerHand)
+    gameLoop({ shoe: shoe, playerHand: playerHand, dealerHand: dealerHand })
+  }
+}
 
-  gameLoop({ shoe: shoe, playerHand: playerHand, dealerHand: dealerHand })
+function isBlackjack(hand: Hand): boolean {
+  if (Math.max(...hand.getValue()) === 21) {
+    return true
+  }
+  return false
 }
 
 function dealHand(shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
