@@ -6,7 +6,7 @@ import * as readline from 'node:readline'
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
 const gameLoop = function (shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
-  const currentHighValue = playerHand.value(playerHand.showCards().cards).pop()!
+  const currentHighValue = playerHand.value.pop()!
   if (currentHighValue > 21) {
     console.log('BUST!')
     console.log('Dealer\u2019s hand:')
@@ -16,6 +16,7 @@ const gameLoop = function (shoe: Shoe, playerHand: Hand, dealerHand: Hand): void
       let processedAction = action.toUpperCase()
       if (processedAction === ('H' || 'HIT')) {
         console.log('You hit')
+        console.log('')
         playerHand.addCard(shoe.cards.pop()!)
         displayHand('Player', playerHand)
         gameLoop(shoe, playerHand, dealerHand)

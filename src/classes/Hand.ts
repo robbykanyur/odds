@@ -4,7 +4,7 @@ import { Seat } from '../lib/types'
 export default class Hand {
   private cards: Card[]
   public seat: Seat
-  public value = this.calculateTotal
+  public value = this.calculateTotal()
 
   constructor(seat: Seat) {
     this.cards = []
@@ -13,9 +13,9 @@ export default class Hand {
 
   public showCards(): { total: number[]; cards: Card[] } {
     if (this.seat == 'Player') {
-      return { total: this.calculateTotal(this.cards), cards: this.cards }
+      return { total: this.calculateTotal(), cards: this.cards }
     } else {
-      return { total: this.calculateTotal([this.cards[0]]), cards: [this.cards[0]] }
+      return { total: this.calculateTotal(), cards: [this.cards[0]] }
     }
   }
 
@@ -24,10 +24,10 @@ export default class Hand {
     return this.cards
   }
 
-  private calculateTotal(cards: Card[]): number[] {
+  private calculateTotal(): number[] {
     let total = 0
     let aces = 0
-    cards.forEach(card => {
+    this.cards.forEach(card => {
       if (card.face === 'Ace') {
         aces += 1
         total += 11

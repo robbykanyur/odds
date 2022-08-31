@@ -14,13 +14,13 @@ function displayHand(seat, hand) {
         hand.showCards().cards.forEach(card => {
             console.log(card.displayName());
         });
-        console.log('Value of hand: ', hand.value(hand.showCards().cards));
+        console.log('Value of hand: ', hand.value);
         console.log('');
     }
     else {
         console.log('Dealer\u2019s hand: ');
         console.log(hand.showCards().cards[0].displayName());
-        console.log('Value of hand: ', hand.value(hand.showCards().cards));
+        console.log('Value of hand: ', hand.value);
         console.log('');
     }
 }

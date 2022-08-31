@@ -32,7 +32,7 @@ const helpers_1 = require("./helpers");
 const readline = __importStar(require("node:readline"));
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const gameLoop = function (shoe, playerHand, dealerHand) {
-    const currentHighValue = playerHand.value(playerHand.showCards().cards).pop();
+    const currentHighValue = playerHand.value.pop();
     if (currentHighValue > 21) {
         console.log('BUST!');
         console.log('Dealer\u2019s hand:');
@@ -43,6 +43,7 @@ const gameLoop = function (shoe, playerHand, dealerHand) {
             let processedAction = action.toUpperCase();
             if (processedAction === ('H' || 'HIT')) {
                 console.log('You hit');
+                console.log('');
                 playerHand.addCard(shoe.cards.pop());
                 (0, helpers_1.displayHand)('Player', playerHand);
                 gameLoop(shoe, playerHand, dealerHand);
