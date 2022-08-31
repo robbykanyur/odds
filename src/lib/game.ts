@@ -1,37 +1,37 @@
 import Shoe from '../classes/Shoe'
 import Hand from '../classes/Hand'
+import { Game } from '../lib/types'
 import { displayHand, dealHand } from './helpers'
 import * as readline from 'node:readline'
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
-const gameLoop = function (shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
-  const currentHighValue = playerHand.value().pop()!
-  if (currentHighValue > 21) {
+const gameLoop = function (game: Game): void {
+  const currentLowValue = game.playerHand.value()[0]!
+  if (currentLowValue > 21) {
     console.log('BUST!', '\n')
-    console.log('Dealer\u2019s hand:', '\n')
-    console.log(displayHand('Player', dealerHand))
+    console.log(displayHand('Player', game.dealerHand))
   } else {
     rl.question('Would you like to [H]it or [S]tand? ', action => {
       let processedAction = action.toUpperCase()
       if (processedAction === ('H' || 'HIT')) {
         console.log('You hit', '\n')
-        playerHand.addCard(shoe.cards.pop()!)
-        displayHand('Player', playerHand)
-        gameLoop(shoe, playerHand, dealerHand)
+        game.playerHand.addCard(game.shoe.cards.pop()!)
+        displayHand('Player', game.playerHand)
+        gameLoop(game)
       } else if (processedAction === ('S' || 'STAND')) {
         console.log('You stood', '\n')
-        playDealerHand()
+        playDealerHand(game)
       } else {
         console.log('Invalid input \u2013 please try again')
-        gameLoop(shoe, playerHand, dealerHand)
+        gameLoop(game)
       }
     })
   }
 }
 
-function playDealerHand(): void {
-  console.log('playing dealer hand')
+function playDealerHand(game: Game): void {
+  displayHand('Player', game.dealerHand)
 }
 
 function playGame(): void {
@@ -43,7 +43,7 @@ function playGame(): void {
   displayHand('Dealer', dealerHand)
   displayHand('Player', playerHand)
 
-  gameLoop(shoe, playerHand, dealerHand)
+  gameLoop({ shoe: shoe, playerHand: playerHand, dealerHand: dealerHand })
 }
 
 export default playGame
