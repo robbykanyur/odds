@@ -20,7 +20,7 @@ export default class Hand {
     return this.cards
   }
 
-  public value(hideDealerCard?: boolean): number[] {
+  public getValue(hideDealerCard?: boolean): number[] {
     let total = 0
     let aces = 0
     this.cards.forEach(card => {
@@ -49,5 +49,15 @@ export default class Hand {
 
   public setAce(): void {
     this.cards[0] = new Card('Ace', 'Spades')
+  }
+
+  public setSoft17(): void {
+    this.cards[0] = new Card('Ace', 'Spades')
+    this.cards[1] = new Card('Six', 'Spades')
+  }
+
+  public setBlackjack(): void {
+    this.cards[0] = new Card('Ace', 'Spades')
+    this.cards[1] = new Card('Jack', 'Spades')
   }
 }

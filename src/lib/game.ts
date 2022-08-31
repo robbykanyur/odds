@@ -1,16 +1,14 @@
 import Shoe from '../classes/Shoe'
 import Hand from '../classes/Hand'
-import { Game } from '../lib/types'
-import { displayHand, dealHand } from './helpers'
+import { Game, Seat } from '../lib/types'
 import * as readline from 'node:readline'
-import Card from 'src/classes/Card'
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 
 const gameLoop = function (game: Game): void {
-  const currentLowValue = game.playerHand.value()[0]!
+  let currentLowValue = game.playerHand.getValue()[0]!
   if (currentLowValue > 21) {
-    console.log('BUST!', '\n')
+    console.log('BUST!!!', '\n')
     displayHand('Dealer', game.dealerHand)
   } else {
     rl.question('Would you like to [H]it or [S]tand? ', action => {
@@ -31,10 +29,6 @@ const gameLoop = function (game: Game): void {
   }
 }
 
-function playDealerHand(game: Game): void {
-  displayHand('Dealer', game.dealerHand)
-}
-
 function playGame(): void {
   const shoe = new Shoe(4)
   shoe.shuffle()
@@ -42,10 +36,51 @@ function playGame(): void {
   const dealerHand = new Hand()
   dealHand(shoe, playerHand, dealerHand)
 
+  dealerHand.setBlackjack()
+
   displayHand('Dealer', dealerHand, true)
   displayHand('Player', playerHand)
 
   gameLoop({ shoe: shoe, playerHand: playerHand, dealerHand: dealerHand })
+}
+
+function dealHand(shoe: Shoe, playerHand: Hand, dealerHand: Hand): void {
+  for (let i = 0; i < 2; i++) {
+    playerHand.addCard(shoe.cards.pop()!)
+    dealerHand.addCard(shoe.cards.pop()!)
+  }
+}
+
+function displayHand(seat: Seat, hand: Hand, hideDealerCard?: boolean): void {
+  if (seat === 'Player') {
+    console.log('Your hand:')
+  } else {
+    console.log('Dealer\u2019s hand: ')
+  }
+  hand.showCards(hideDealerCard).cards.forEach(card => {
+    console.log(card.displayName())
+  })
+  console.log('Value of hand:', hand.getValue(hideDealerCard), '\n')
+}
+
+function playDealerHand(game: Game): void {
+  displayHand('Dealer', game.dealerHand)
+
+  let currentLowValue = game.dealerHand.getValue()[0]!
+  if (currentLowValue > 21) {
+    console.log('DEALER BUST!!!')
+  } else {
+    if (Math.max(...game.dealerHand.getValue()) < 17) {
+      game.dealerHand.addCard(game.shoe.cards.pop()!)
+      playDealerHand(game)
+    } else if (game.dealerHand.getValue().length > 1 && game.dealerHand.getValue()[1] === 17) {
+      // hit on soft 17
+      game.dealerHand.addCard(game.shoe.cards.pop()!)
+      playDealerHand(game)
+    } else {
+      console.log('Dealer stood')
+    }
+  }
 }
 
 export default playGame
