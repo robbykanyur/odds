@@ -1,8 +1,8 @@
 export default class Bank {
   public bankroll: number
 
-  constructor() {
-    this.bankroll = 1000
+  constructor(amount: number) {
+    this.bankroll = amount
   }
 
   public addFunds(amount: number): number {

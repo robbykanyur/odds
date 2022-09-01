@@ -1,6 +1,6 @@
-import Shoe from 'src/classes/Shoe'
-import Hand from 'src/classes/Hand'
-import Bank from 'src/classes/Bank'
+import Shoe from '../classes/Shoe'
+import Hand from '../classes/Hand'
+import Bank from '../classes/Bank'
 
 export const FACES = [
   'Ace',

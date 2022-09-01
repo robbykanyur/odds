@@ -1,2 +1,2 @@
-import playGame from './lib/game'
-playGame()
+import initializeGame from './lib/game'
+initializeGame()

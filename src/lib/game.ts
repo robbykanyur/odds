@@ -15,8 +15,8 @@ const gameLoop = function (game: Game): void {
   }
   if (currentLowValue > 21) {
     console.log('BUST!!!', '\n')
-    playerLoss(game)
     displayHand('Dealer', game.dealerHand)
+    playerLoss(game)
   } else {
     const action = readline.question('Would you like to [H]it or [S]tand? ').toUpperCase()
     if (action === 'H' || action === 'HIT') {
@@ -34,17 +34,30 @@ const gameLoop = function (game: Game): void {
   }
 }
 
-function playGame(): void {
+function initializeGame(): void {
+  console.log('Welcome to blackjack!')
+
   const game: Game = {
-    shoe: new Shoe(4),
+    shoe: new Shoe(6),
     playerHand: new Hand(),
     dealerHand: new Hand(),
-    bank: new Bank(),
+    bank: new Bank(1000),
   }
 
   game.shoe.shuffle()
+  playGame(game)
+}
 
-  game.playerHand.wager = placeWager(game.bank, game.playerHand)
+function playGame(game: Game, wager?: number) {
+  game.playerHand = new Hand()
+  game.dealerHand = new Hand()
+
+  if (wager) {
+    game.playerHand.wager = placeWager(game.bank, game.playerHand, wager)
+  } else {
+    game.playerHand.wager = placeWager(game.bank, game.playerHand)
+  }
+
   dealHand(game.shoe, game.playerHand, game.dealerHand)
 
   if (isBlackjack(game.dealerHand) && isBlackjack(game.playerHand)) {
@@ -61,7 +74,7 @@ function playGame(): void {
     displayHand('Dealer', game.dealerHand)
     displayHand('Player', game.playerHand)
     console.log('YOU GOT BLACKJACK!!!')
-    playerWin(game)
+    playerWin(game, true)
   } else {
     displayHand('Dealer', game.dealerHand, true)
     displayHand('Player', game.playerHand)
@@ -69,11 +82,16 @@ function playGame(): void {
   }
 }
 
-function placeWager(bank: Bank, hand: Hand): number {
-  console.log('You currently have $', bank.checkFunds())
-  const amount = parseInt(readline.question('How much would you like to wager? $'))
-  bank.removeFunds(amount)
-  return amount
+function placeWager(bank: Bank, hand: Hand, wager?: number): number {
+  if (wager) {
+    bank.removeFunds(wager)
+    return wager
+  } else {
+    console.log('You currently have $', bank.checkFunds())
+    const amount = parseInt(readline.question('How much would you like to wager? $'))
+    bank.removeFunds(amount)
+    return amount
+  }
 }
 
 function isBlackjack(hand: Hand): boolean {
@@ -137,21 +155,47 @@ function checkWinner(game: Game): void {
   }
 }
 
-function playerWin(game: Game): void {
-  game.bank.addFunds(game.playerHand.wager * 2)
-  console.log('YOU WON $', game.playerHand.wager, '!!!')
-  console.log('New balance: $', game.bank.bankroll)
+function playerWin(game: Game, isBlackjack?: boolean): void {
+  if (game.playerHand.wager) {
+    if (isBlackjack) {
+      game.bank.addFunds(game.playerHand.wager + game.playerHand.wager * 1.2)
+      console.log('YOU WON $', game.playerHand.wager * 1.2, '!!!')
+    } else {
+      game.bank.addFunds(game.playerHand.wager * 2)
+      console.log('YOU WON $', game.playerHand.wager, '!!!')
+    }
+    console.log('New balance: $', game.bank.bankroll)
+    playAgain(game)
+  }
 }
 
 function playerLoss(game: Game): void {
   console.log('YOU LOST $', game.playerHand.wager)
   console.log('New balance: $', game.bank.bankroll)
+  playAgain(game)
 }
 
 function playerPush(game: Game): void {
-  console.log('PUSH!')
-  game.bank.addFunds(game.playerHand.wager)
-  console.log('Current balance: $', game.bank.bankroll)
+  if (game.playerHand.wager) {
+    console.log('PUSH!')
+    game.bank.addFunds(game.playerHand.wager)
+    console.log('Current balance: $', game.bank.bankroll)
+    playAgain(game)
+  }
 }
 
-export default playGame
+function playAgain(game: Game): void {
+  console.log('')
+  if (game.bank.bankroll <= 0) {
+    console.log('You are out of money. Goodbye!')
+  } else {
+    const response = readline.question('Enter a bet to play again, or press <Enter> to quit. $')
+    if (response === '') {
+      console.log('Goodbye!')
+    } else {
+      playGame(game, parseInt(response))
+    }
+  }
+}
+
+export default initializeGame
