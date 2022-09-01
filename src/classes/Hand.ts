@@ -1,7 +1,10 @@
 import Card from './Card'
+import { Result } from 'src/lib/types'
 
 export default class Hand {
   private cards: Card[]
+  public wager: number
+  public result: Result
 
   constructor() {
     this.cards = []
@@ -34,6 +37,8 @@ export default class Hand {
 
     if (hideDealerCard && this.cards[0].face == 'Ace') {
       return [1, 11]
+    } else if (hideDealerCard) {
+      return [this.cards[0].getValue()]
     }
 
     if (aces === 0) {
