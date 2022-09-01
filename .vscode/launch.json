@@ -13,7 +13,10 @@
       "preLaunchTask": "npm: build",
       "outFiles": ["${workspaceFolder}/build/**/*.js"],
       "outputCapture": "std",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "smartStep": true,
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

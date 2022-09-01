@@ -18,19 +18,45 @@ const gameLoop = function (game: Game): void {
     displayHand('Dealer', game.dealerHand)
     playerLoss(game)
   } else {
-    const action = readline.question('Would you like to [H]it or [S]tand? ').toUpperCase()
-    if (action === 'H' || action === 'HIT') {
-      console.log('You hit', '\n')
+    getPlayerAction(game)
+  }
+}
+
+function getPlayerAction(game: Game): void {
+  let playerCanDouble = false
+  if (game.playerHand.showCards().cards.length === 2) {
+    playerCanDouble = true
+  }
+
+  let questionText = 'Would you like to [H]it or [S]tand? '
+  if (playerCanDouble) {
+    questionText = 'Would you like to [H]it, [S]tand, or [D]ouble? '
+  }
+
+  const action = readline.question(questionText).toUpperCase()
+  if (action === 'H' || action === 'HIT') {
+    console.log('You hit', '\n')
+    game.playerHand.addCard(game.shoe.cards.pop()!)
+    displayHand('Player', game.playerHand)
+    gameLoop(game)
+  } else if (action === 'S' || action === 'STAND') {
+    console.log('You stood', '\n')
+    playDealerHand(game)
+  } else if (action === 'D' || action === 'DOUBLE') {
+    if (game.bank.bankroll >= game.playerHand.wager) {
+      console.log('You doubled down', '\n')
       game.playerHand.addCard(game.shoe.cards.pop()!)
+      game.bank.removeFunds(game.playerHand.wager)
+      game.playerHand.wager = game.playerHand.wager * 2
       displayHand('Player', game.playerHand)
-      gameLoop(game)
-    } else if (action === 'S' || action === 'STAND') {
-      console.log('You stood', '\n')
       playDealerHand(game)
     } else {
-      console.log('Invalid input \u2013 please try again')
-      gameLoop(game)
+      console.log('You don\u2019t have enough money to double your bet.', '\n')
+      getPlayerAction(game)
     }
+  } else {
+    console.log('Invalid input \u2013 please try again')
+    gameLoop(game)
   }
 }
 

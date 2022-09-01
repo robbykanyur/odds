@@ -1,13 +1,12 @@
 import Card from './Card'
-import { Result } from '../lib/types'
 
 export default class Hand {
   private cards: Card[]
-  public wager?: number
-  public result?: Result
+  public wager: number
 
   constructor() {
     this.cards = []
+    this.wager = 0
   }
 
   public showCards(hideDealerCard?: boolean): { cards: Card[] } {
