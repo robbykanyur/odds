@@ -28,8 +28,18 @@ function getPlayerAction(game: Game): void {
     playerCanDouble = true
   }
 
+  let playerCanSplit = false
+  const cards = game.playerHand.showCards().cards
+  if (cards[0].face === cards[1].face) {
+    playerCanSplit = true
+  }
+
   let questionText = 'Would you like to [H]it or [S]tand? '
-  if (playerCanDouble) {
+  if (playerCanSplit && playerCanDouble) {
+    questionText = 'Would you like to [H]it, [S]tand, spli[T], or [D]ouble? '
+  } else if (playerCanSplit) {
+    questionText = 'Would you like to [H]it, [S]tand, or spli[T]? '
+  } else if (playerCanDouble) {
     questionText = 'Would you like to [H]it, [S]tand, or [D]ouble? '
   }
 
@@ -42,6 +52,12 @@ function getPlayerAction(game: Game): void {
   } else if (action === 'S' || action === 'STAND') {
     console.log('You stood', '\n')
     playDealerHand(game)
+  } else if (action === 'T' || action === 'SPLIT') {
+    const splitHands = game.playerHand.splitHand()
+    game.playerHand = splitHands[0]
+    game.playerHand.split = splitHands[1]
+    game.bank.removeFunds(game.playerHand.wager)
+    playSplit(game)
   } else if (action === 'D' || action === 'DOUBLE') {
     if (game.bank.bankroll >= game.playerHand.wager) {
       console.log('You doubled down', '\n')
@@ -57,6 +73,42 @@ function getPlayerAction(game: Game): void {
   } else {
     console.log('Invalid input \u2013 please try again')
     gameLoop(game)
+  }
+}
+
+function playSplit(game: Game): void {
+  if (game.playerHand.split?.showCards().cards[0].face === 'Ace') {
+    console.log('')
+    console.log('Playing first hand:')
+    game.playerHand.split?.showCards().cards.forEach(card => {
+      console.log(card.displayName())
+    })
+    console.log('Value of hand: ', game.playerHand.split.getValue())
+    console.log('')
+    readline.question('Press enter to hit')
+    console.log('')
+    game.playerHand.split.addCard(game.shoe.cards.pop()!)
+    game.playerHand.split?.showCards().cards.forEach(card => {
+      console.log(card.displayName())
+    })
+    console.log('Value of hand: ', game.playerHand.split.getValue())
+    console.log('')
+    readline.question('Press enter to continue')
+    console.log('')
+    console.log('Playing second hand:')
+    game.playerHand.showCards().cards.forEach(card => {
+      console.log(card.displayName())
+    })
+    console.log('Value of hand: ', game.playerHand.getValue(), '\n')
+    readline.question('Press enter to hit')
+    console.log('')
+    game.playerHand.addCard(game.shoe.cards.pop()!)
+    game.playerHand.showCards().cards.forEach(card => {
+      console.log(card.displayName())
+    })
+    console.log('Value of hand: ', game.playerHand.split.getValue())
+    console.log('')
+    readline.question('Press enter to continue')
   }
 }
 
@@ -85,6 +137,7 @@ function playGame(game: Game, wager?: number) {
   }
 
   dealHand(game.shoe, game.playerHand, game.dealerHand)
+  game.playerHand.setSplitAces()
 
   if (isBlackjack(game.dealerHand) && isBlackjack(game.playerHand)) {
     displayHand('Dealer', game.dealerHand)
@@ -116,6 +169,7 @@ function placeWager(bank: Bank, hand: Hand, wager?: number): number {
     console.log('You currently have $', bank.checkFunds())
     const amount = parseInt(readline.question('How much would you like to wager? $'))
     bank.removeFunds(amount)
+    console.log('')
     return amount
   }
 }

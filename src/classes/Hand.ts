@@ -3,9 +3,15 @@ import Card from './Card'
 export default class Hand {
   private cards: Card[]
   public wager: number
+  public split?: Hand
 
-  constructor() {
-    this.cards = []
+  constructor(card?: Card) {
+    if (card) {
+      this.cards = [card]
+    } else {
+      this.cards = []
+    }
+    this.split = undefined
     this.wager = 0
   }
 
@@ -20,6 +26,12 @@ export default class Hand {
   public addCard(card: Card): Card[] {
     this.cards.push(card)
     return this.cards
+  }
+
+  public splitHand(): Hand[] {
+    const firstHand = new Hand(this.cards[0])
+    const secondHand = new Hand(this.cards[1])
+    return [firstHand, secondHand]
   }
 
   public getValue(hideDealerCard?: boolean): number[] {
@@ -63,5 +75,15 @@ export default class Hand {
   public setBlackjack(): void {
     this.cards[0] = new Card('Ace', 'Spades')
     this.cards[1] = new Card('Jack', 'Spades')
+  }
+
+  public setSplit(): void {
+    this.cards[0] = new Card('Eight', 'Diamonds')
+    this.cards[1] = new Card('Eight', 'Hearts')
+  }
+
+  public setSplitAces(): void {
+    this.cards[0] = new Card('Ace', 'Spades')
+    this.cards[1] = new Card('Ace', 'Clubs')
   }
 }
